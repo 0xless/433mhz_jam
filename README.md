@@ -33,7 +33,9 @@ Pin 4 should be safe, but if you plan on changing it, make sure to check for boo
 
 ### Software
 Before installing the software, you need to setup the Arduino IDE and configure it to work with ESP32 boards.  
-No dependencies! Simply clone the repository, open the `.ino` file in the Arduino IDE and flash the ESP32 board.
+You will also need to install ![ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) and ![AsyncTCP](https://github.com/me-no-dev/AsyncTCP).
+
+Now you can simply clone the repository, open the `.ino` file in the Arduino IDE and flash the ESP32 board.
 
 NOTE: it's not mandatory, but you may want to change the default SSID and password for the WiFi network.
 
