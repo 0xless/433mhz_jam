@@ -1,7 +1,6 @@
 # 433Mhz jam
 Simple WiFi controlled 433Mhz radio jammer.  
 The device is composed of an ESP32 that acts as a WiFi access point and webserver, and an FS1000A which is the radio transmitter.  
-One file, no dependencies.
 
 ### ⚠️ WARNING ⚠️
 Jamming frequencies is most likely illegal in your country.  
