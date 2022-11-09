@@ -25,14 +25,14 @@ To connect the devices simply follow the schematics:
   <img src="https://user-images.githubusercontent.com/78535423/200618065-28e11512-7293-4231-9715-651191cd74a3.png" height="400" alt="433 Mhz jam schematics"/>
 </p>
 
-The antenna can be bought or built. If you plan on going DIY, I suggest following ![this guide](https://github.com/0xless/433mhz_jam/blob/main/How-to-make-a-Air-Cooled-433MHz-antenna.pdf) (found on the internet, not mine). 
+The antenna can be bought or built. If you plan on going DIY, I suggest following [this guide](https://github.com/0xless/433mhz_jam/blob/main/How-to-make-a-Air-Cooled-433MHz-antenna.pdf) (found on the internet, not mine). 
 
 NOTE: depending on your ESP32 board, using some pins as data pin can cause a bootloop!  
 Pin 4 should be safe, but if you plan on changing it, make sure to check for bootloops.
 
 ### Software
 Before installing the software, you need to setup the Arduino IDE and configure it to work with ESP32 boards.  
-You will also need to install ![ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) and ![AsyncTCP](https://github.com/me-no-dev/AsyncTCP).
+You will also need to install [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) and [AsyncTCP](https://github.com/me-no-dev/AsyncTCP).
 
 Now you can simply clone the repository, open the `.ino` file in the Arduino IDE and flash the ESP32 board.
 
