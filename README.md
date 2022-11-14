@@ -40,7 +40,7 @@ NOTE: it's not mandatory, but you may want to change the default SSID and passwo
 
 ## Usage
 To use 433Mhz jam you need to power on the device and wait a few seconds for it to complete booting up.  
-After a while. a new WiFi network should be available, connect to it and using a browser connect to `192.168.2.1` (it's the default IP for the board in the software, make sure to change it if needed).  
+After a while a new WiFi network should be available, connect to it and using a browser visit `192.168.2.1` (it's the default IP for the board in the software, make sure to change it if needed).  
 
 At this point a simple html page with a button should show up. Press the button to start jamming! And press again to stop.
 
