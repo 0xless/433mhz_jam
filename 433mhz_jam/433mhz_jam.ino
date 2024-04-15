@@ -1,12 +1,27 @@
 
-// Libraries for web server/AP
+#include <Arduino.h>
+#ifdef ESP32
 #include <WiFi.h>
 #include <AsyncTCP.h>
+#elif defined(ESP8266)
+#include <ESP8266WiFi.h>
+#include <ESPAsyncTCP.h>
+#endif
 #include <ESPAsyncWebServer.h>
 
+// use first channel of 16 channels (started from zero)
+#define LEDC_CHANNEL_0     0
+
+// use 12 bit precission for LEDC timer
+#define LEDC_TIMER_12_BIT  12
+
+// use 5000 Hz as a LEDC base frequency
+#define LEDC_BASE_FREQ     5000
+// Create AsyncWebServer object on port 80
+AsyncWebServer server(80);
 // SSID & Password
-const char* ssid = "433mhzjam";  // Enter your SSID here
-const char* password = "123456789";  //Enter your Password here
+const char* ssid = "YOUR_SSID";  // Enter your SSID here
+const char* password = "12345678";  //Enter your Password here
 
 // turn on html page
 const char * turn_on_html PROGMEM = "<!DOCTYPE html>"
@@ -97,8 +112,6 @@ const char * turn_off_html PROGMEM = "<!DOCTYPE html>"
 "</body>"
 "</html>";
 
-// Create AsyncWebServer object on port 80
-AsyncWebServer server(80);
 
 // IP Address details
 IPAddress local_ip(192, 168, 2, 1);
@@ -106,31 +119,35 @@ IPAddress gateway(192, 168, 2, 1);
 IPAddress subnet(255, 255, 255, 0);
 
 int jam_flag = 0;
-int on_off_flag = 0;
-int on_off_flag_b = 0;
+int out_pin = 16;
 
-int out_pin = 4;
-
-void setup(){
+void setup()
+{
+  pinMode(2, OUTPUT);
+  ledcSetup(LEDC_CHANNEL_0, LEDC_BASE_FREQ, LEDC_TIMER_12_BIT);
+  ledcAttachPin(out_pin, LEDC_CHANNEL_0);
   // Serial port for debugging purposes
   Serial.begin(115200);
-  
-  // Create SoftAP
-  WiFi.softAP(ssid, password);
-  delay(5000);
+  WiFi.mode(WIFI_STA);
+  Serial.println();
+  Serial.println("Configuring access point...");
+
+  if (!WiFi.softAP(ssid, password, 6, 0, 2, false)) {
+    log_e("Soft AP creation failed.");
+    while(1);
+  }
   WiFi.softAPConfig(local_ip, gateway, subnet);
-  
-  Serial.println("");
-  Serial.println("[+] Access point created");
-  
+  IPAddress myIP = WiFi.softAPIP();
   Serial.print("[*] SSID: ");
   Serial.println(ssid);
   Serial.print("[*] password: ");
   Serial.println(password);
-  
+
+  Serial.println("Server started");
   // Routes for web pages
   // root "/"
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+  {
     request->send_P(200, "text/html", turn_on_html);
   });
 
@@ -138,6 +155,7 @@ void setup(){
   server.on("/turn_on", HTTP_GET, [jam_flag](AsyncWebServerRequest *request)
   {
     jam_flag = 0;
+    toggle_jamming(jam_flag);
     request->send_P(200, "text/html", turn_on_html);
   });
 
@@ -145,6 +163,7 @@ void setup(){
   server.on("/turn_off", HTTP_GET, [jam_flag](AsyncWebServerRequest *request)
   {
     jam_flag = 1;
+    toggle_jamming(jam_flag);
     request->send_P(200, "text/html", turn_off_html);
   });
 
@@ -155,28 +174,22 @@ void setup(){
 
 }
 
-void loop() 
+void toggle_jamming(int jam_flag)
 {
   if(jam_flag == 1)
   {
-    if(on_off_flag == 0)
-    {
       tone(out_pin, 20000); // send square wave on pin
-      on_off_flag = 1;
+      digitalWrite(2, HIGH);
       Serial.println("[+] Started jamming");
-    }
-    
-    on_off_flag_b = 0;
   }
   else
   {
-    if(on_off_flag_b == 0)
-    {
       tone(out_pin, 0);   // send nothing to pin
-      on_off_flag_b = 1;
+      digitalWrite(2, LOW);
       Serial.println("[+] Stopped jamming");
-    }
-    
-    on_off_flag = 0;
   }
+
+}
+void loop() 
+{
 }
