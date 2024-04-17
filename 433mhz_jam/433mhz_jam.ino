@@ -152,7 +152,7 @@ void setup()
   });
 
   // turn on page "/turn_on"
-  server.on("/turn_on", HTTP_GET, [jam_flag](AsyncWebServerRequest *request)
+  server.on("/turn_on", HTTP_GET, [](AsyncWebServerRequest *request)
   {
     jam_flag = 0;
     toggle_jamming(jam_flag);
@@ -160,7 +160,7 @@ void setup()
   });
 
   // turn off page "/turn_off"
-  server.on("/turn_off", HTTP_GET, [jam_flag](AsyncWebServerRequest *request)
+  server.on("/turn_off", HTTP_GET, [](AsyncWebServerRequest *request)
   {
     jam_flag = 1;
     toggle_jamming(jam_flag);
