@@ -132,7 +132,8 @@ void setup()
   Serial.println();
   Serial.println("Configuring access point...");
 
-  if (!WiFi.softAP(ssid, password, 6, 0, 2, false)) {
+  if (!WiFi.softAP(ssid, password, 6, 1, 2, false))  // Channel 6, SSID Hidden, Max Connections: 2
+  {
     log_e("Soft AP creation failed.");
     while(1);
   }
@@ -178,7 +179,7 @@ void toggle_jamming(int jam_flag)
 {
   if(jam_flag == 1)
   {
-      tone(out_pin, 20000); // send square wave on pin
+      ledcWrite(LEDC_CHANNEL_0, 2047);        // Using Duty Cycle results in better jamming
       digitalWrite(2, HIGH);
       Serial.println("[+] Started jamming");
   }
