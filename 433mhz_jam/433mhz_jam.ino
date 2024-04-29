@@ -1,4 +1,3 @@
-
 #include <Arduino.h>
 #ifdef ESP32
 #include <WiFi.h>
@@ -11,14 +10,19 @@
 
 // use first channel of 16 channels (started from zero)
 #define LEDC_CHANNEL_0     0
-
 // use 12 bit precission for LEDC timer
 #define LEDC_TIMER_12_BIT  12
-
 // use 5000 Hz as a LEDC base frequency
 #define LEDC_BASE_FREQ     5000
+
+// jamming output pin
+#define OUT_PIN 4
+// built-in LED pin
+#define LED 2
+
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
+
 // SSID & Password
 const char* ssid = "YOUR_SSID";  // Enter your SSID here
 const char* password = "12345678";  //Enter your Password here
@@ -119,22 +123,27 @@ IPAddress gateway(192, 168, 2, 1);
 IPAddress subnet(255, 255, 255, 0);
 
 int jam_flag = 0;
-int out_pin = 16;
 
 void setup()
 {
-  pinMode(2, OUTPUT);
-  ledcSetup(LEDC_CHANNEL_0, LEDC_BASE_FREQ, LEDC_TIMER_12_BIT);
-  ledcAttachPin(out_pin, LEDC_CHANNEL_0);
+  pinMode(LED, OUTPUT);
+
+  #ifdef ESP32
+    ledcSetup(LEDC_CHANNEL_0, LEDC_BASE_FREQ, LEDC_TIMER_12_BIT);
+    ledcAttachPin(OUT_PIN, LEDC_CHANNEL_0);
+  #else
+    pinMode(OUT_PIN, OUTPUT);
+  #endif
+    
   // Serial port for debugging purposes
   Serial.begin(115200);
   WiFi.mode(WIFI_STA);
   Serial.println();
-  Serial.println("Configuring access point...");
+  Serial.println("[+] Configuring access point...");
 
   if (!WiFi.softAP(ssid, password, 6, 1, 2, false))  // Channel 6, SSID Hidden, Max Connections: 2
   {
-    log_e("Soft AP creation failed.");
+    Serial.print("[!] Soft AP creation failed.");
     while(1);
   }
   WiFi.softAPConfig(local_ip, gateway, subnet);
@@ -144,7 +153,6 @@ void setup()
   Serial.print("[*] password: ");
   Serial.println(password);
 
-  Serial.println("Server started");
   // Routes for web pages
   // root "/"
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -179,15 +187,20 @@ void toggle_jamming(int jam_flag)
 {
   if(jam_flag == 1)
   {
+    #ifdef ESP32
       ledcWrite(LEDC_CHANNEL_0, 2047);        // Using Duty Cycle results in better jamming
-      digitalWrite(2, HIGH);
-      Serial.println("[+] Started jamming");
+    #elif defined(ESP8266)
+      tone(OUT_PIN, 2047);
+    #endif
+      
+    digitalWrite(LED, HIGH);
+    Serial.println("[+] Started jamming");
   }
   else
   {
-      tone(out_pin, 0);   // send nothing to pin
-      digitalWrite(2, LOW);
-      Serial.println("[+] Stopped jamming");
+    tone(OUT_PIN, 0);   // send nothing to pin
+    digitalWrite(LED, LOW);
+    Serial.println("[+] Stopped jamming");
   }
 
 }
