@@ -36,12 +36,12 @@ You will also need to install [ESPAsyncWebServer](https://github.com/me-no-dev/E
 
 Now you can simply clone the repository, open the `.ino` file in the Arduino IDE and flash the target board.
 
-Before flashing, make sure to change the default SSID and password.
+Before flashing, make sure to change the default SSID and password. By default the network is created with an hidden SSID, keep that in mind when attempting to connect to the WiFi network.
 
 ## Usage
-To use 433Mhz jam you need to power on the device and wait a few seconds for it to complete booting up.  
-After a while a new WiFi network should be available, connect to it and using a browser visit `192.168.2.1` (default board IP).  
+To use 433Mhz jam you need to power on the device and wait a few seconds for it to complete booting up. After that the new WiFi network should be available, it is now possible to connect to the network and use a browser to visit `192.168.2.1` (default board IP).  
 
-At this point a simple html page with a button should show up. Press the button to start jamming! And press again to stop.
+At this point a simple HTML page with a button should show up. Press the button to start jamming! And press again to stop.
 
 NOTE: in some phones, to connect to an IP in the local network, you need to disconnect phone data.
+Debug messages are available via serial console to troubleshoot potential issues.
